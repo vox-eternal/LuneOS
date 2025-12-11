@@ -34,13 +34,13 @@ LuneOS is my personal, educational endeavor to learn low level systems from the 
 | :--- | :--- | :--- |
 | **Boot Sequence** | Transition from 16-bit Real Mode to 32-bit Protected Mode. | ✅ Complete |
 | **Kernel Entry** | Initialization of basic segmentation registers and stack. | ✅ Complete |
-| **Lopis Ipos** | Lopis Ipos | **In Progress** |
-| **Lopis Ipos** | Lopis Ipos | **Planned** |
+| **Reading from Disk** |reading from disk for future file storage | **In Progress** |
+| **implementing compiler** | usage of compiling C code for future projects and ease of use | **Planned** |
 
 ---
 
 ## 💾 Core Specifications
 
-* **Goal:** IDK YOU CHOOSE LUNE
-* **Target Environment:** IDK YOU CHOOSE LUNE
-* **License:** IDK YOU CHOOSE LUNE
+* **Goal:** Add a text editor that can run and compile C code.
+* **Target Environment:** x86 architecture
+* **License:** N/A
