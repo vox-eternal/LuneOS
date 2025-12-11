@@ -30,7 +30,7 @@ ebr_drive_number:           db 0                    ; 0x00 floppy, 0x80 hdd, use
                             db 0                    ; reserved
 ebr_signature:              db 29h
 ebr_volume_id:              db 12h, 34h, 56h, 78h   ; serial number, value doesn't matter
-ebr_volume_label:           db 'NANOBYTE OS'        ; 11 bytes, padded with spaces
+ebr_volume_label:           db 'LUNEOS     '        ; 11 bytes, padded with spaces
 ebr_system_id:              db 'FAT12   '           ; 8 bytes
 retry_count:                db 3
 ;
@@ -226,6 +226,5 @@ disk_reset:
 
 msg_hello:              db 'Hello world!', ENDL, 0
 msg_read_failed:        db 'Read from disk failed!', ENDL, 0
-
 times 510-($-$$) db 0
 dw 0AA55h
