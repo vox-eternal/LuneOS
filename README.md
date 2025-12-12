@@ -34,7 +34,7 @@ LuneOS is my personal, educational endeavor to learn low level systems from the 
 | :--- | :--- | :--- |
 | **Boot Sequence** | Transition from 16-bit Real Mode to 32-bit Protected Mode. | ✅ Complete |
 | **Kernel Entry** | Initialization of basic segmentation registers and stack. | ✅ Complete |
-| **Reading from Disk** |reading from disk for future file storage | **In Progress** |
+| **Reading from Disk** |reading from disk for future file storage | ✅ Complete |
 | **implementing compiler** | usage of compiling C code for future projects and ease of use | **Planned** |
 
 ---
