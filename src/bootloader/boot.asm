@@ -49,7 +49,7 @@ start:
 
     ; some BIOSes might start us at 07C0:0000 instead of 0000:7C00, make sure we are in the
     ; expected location
-    push es
+    push cs
     push word .after
     retf
 
@@ -112,7 +112,7 @@ start:
 
 .search_kernel:
     mov si, file_kernel_bin
-    mov cx, 10                          ; compare up to 11 characters
+    mov cx, 11                      ; compare up to 11 characters
     push di
     repe cmpsb
     pop di
@@ -246,7 +246,7 @@ puts:
     jz .done
 
     mov ah, 0x0E        ; call bios interrupt
-    xor ah, ah          ; set page number to 0
+    mov bh, 0x00
     int 0x10
 
     jmp .loop
@@ -271,10 +271,13 @@ puts:
 ;   - dh: head
 ;
 
+
+
 lba_to_chs:
 
     push ax
     push dx
+    push cx
 
     xor dx, dx                          ; dx = 0
     div word [bdb_sectors_per_track]    ; ax = LBA / SectorsPerTrack
@@ -293,7 +296,8 @@ lba_to_chs:
 
     pop ax
     mov dl, al                          ; restore DL
-    pop ax
+    pop cx
+    pop dx
     ret
 
 
@@ -316,7 +320,9 @@ disk_read:
     push cx                             ; temporarily save CL (number of sectors to read)
     call lba_to_chs                     ; compute CHS
     pop ax                              ; AL = number of sectors to read
-    
+
+
+
     mov ah, 02h
     mov di, 3                           ; retry count
 
@@ -355,7 +361,6 @@ disk_read:
 ;
 disk_reset:
     pusha
-    xor ah, ah
     stc
     int 13h
     jc floppy_error
@@ -363,7 +368,7 @@ disk_reset:
     ret
 
 
-msg_load:            db 'Loading', ENDL, 0
+msg_load:               db 'Loading', ENDL, 0
 msg_read_failed:        db 'Read from disk failed!', ENDL, 0
 msg_kernel_not_found:   db 'KERNEL.BIN file not found!', ENDL, 0
 file_kernel_bin:        db 'KERNEL  BIN'
