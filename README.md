@@ -1,14 +1,5 @@
-```
-  ,,                                                       
-`7MM                                                       
-  MM                                                       
-  MM `7MM  `7MM  `7MMpMMMb.  .gP"Ya       ,pW"Wq.  ,pP"Ybd 
-  MM   MM    MM    MM    MM ,M'   Yb     6W'   `Wb 8I   `" 
-  MM   MM    MM    MM    MM 8M""""""     8M     M8 `YMMMa. 
-  MM   MM    MM    MM    MM YM.    ,     YA.   ,A9 L.   I8 
-.JMML. `Mbod"YML..JMML  JMML.`Mbmmd'      `Ybmd9'  M9mmmP' 
-                                                           
-```
+<img width="941" height="478" alt="image" src="https://github.com/user-attachments/assets/d89f85f4-73f3-4866-bc2f-4b766d8d5996" />
+
 
 # LuneOS
 
