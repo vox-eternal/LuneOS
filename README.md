@@ -3,7 +3,7 @@
 
 # LuneOS
 
-**A sexy, minimalistic, low-level kernel for x86 systems, crafted entirely in Assembly by an Engineer, not a programmer.**  
+**An awesome, minimalistic, low-level bootloader/kernel for x86-64 systems, crafted entirely in Assembly by an Engineer, not a programmer.**  
 
 [![Language: Assembly](https://img.shields.io/badge/Language-Assembly-blueviolet)](https://en.wikipedia.org/wiki/Assembly_language)  
 [![Status: Early Prototype](https://img.shields.io/badge/Status-Early_Prototype-red)](https://github.com/lun3ux/LuneOS)  
