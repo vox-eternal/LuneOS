@@ -47,7 +47,6 @@ kernel: $(BUILD_DIR)/kernel.bin
 $(BUILD_DIR)/kernel.bin: always
 	$(MAKE) -C $(SRC_DIR)/kernel BUILD_DIR=$(abspath $(BUILD_DIR))
 
-
 # Tools
 
 tools_fat: $(BUILD_DIR)/tools/fat
