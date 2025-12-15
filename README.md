@@ -1,18 +1,9 @@
-```
-  ,,                                                       
-`7MM                                                       
-  MM                                                       
-  MM `7MM  `7MM  `7MMpMMMb.  .gP"Ya       ,pW"Wq.  ,pP"Ybd 
-  MM   MM    MM    MM    MM ,M'   Yb     6W'   `Wb 8I   `" 
-  MM   MM    MM    MM    MM 8M""""""     8M     M8 `YMMMa. 
-  MM   MM    MM    MM    MM YM.    ,     YA.   ,A9 L.   I8 
-.JMML. `Mbod"YML..JMML  JMML.`Mbmmd'      `Ybmd9'  M9mmmP' 
-                                                           
-```
+<img width="941" height="478" alt="image" src="https://github.com/user-attachments/assets/d89f85f4-73f3-4866-bc2f-4b766d8d5996" />
+
 
 # LuneOS
 
-**A sexy, minimalistic, low-level kernel for x86 systems, crafted entirely in Assembly by an Engineer, not a programmer.**  
+**An awesome, minimalistic, low-level bootloader/kernel for x86-64 systems, crafted entirely in Assembly by an Engineer, not a programmer.**  
 
 [![Language: Assembly](https://img.shields.io/badge/Language-Assembly-blueviolet)](https://en.wikipedia.org/wiki/Assembly_language)  
 [![Status: Early Prototype](https://img.shields.io/badge/Status-Early_Prototype-red)](https://github.com/lun3ux/LuneOS)  
