@@ -173,11 +173,11 @@ FAT_File far* FAT_OpenEntry(DISK* disk, FAT_DirectoryEntry* entry)
     fd->CurrentCluster = fd->FirstCluster;
     fd->CurrentSectorInCluster = 0;
 
-    if (!DISK_ReadSectors(disk, FAT_ClusterToLba(fd->CurrentCluster), 1, fd->Buffer))
+    if (!DISK_ReadSectors(disk, fd->CurrentCluster, 1, fd->Buffer))
     {
-        printf("FAT: read error\r\n");
-        return false;
+        printf("FAT: read error!\r\n");
     }
+
 
     fd->Opened = true;
     return &fd->Public;
@@ -226,7 +226,7 @@ uint32_t FAT_Read(DISK* disk, FAT_File far* file, uint32_t byteCount, void* data
                 ++fd->CurrentCluster;
 
                 // read next sector
-                if (!DISK_ReadSectors(disk, fd->CurrentCluster, 1, fd->Buffer))
+                if (!DISK_ReadSectors(disk, fd->CurrentCluster, g_Data->BS.BootSector.SectorsPerFat, fd->Buffer))
                 {
                     printf("FAT: read error!\r\n");
                     break;
@@ -349,7 +349,7 @@ FAT_File far* FAT_Open(DISK* disk, const char* path)
             FAT_Close(current);
 
             // check if directory
-            if (!isLast && entry.Attributes & FAT_ATTRIBUTE_DIRECTORY == 0)
+        if (!isLast && entry.Attributes & FAT_ATTRIBUTE_DIRECTORY == 0)
             {
                 printf("FAT: %s not a directory\r\n", name);
                 return NULL;

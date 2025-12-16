@@ -36,10 +36,10 @@ void _cdecl cstart_(uint16_t bootDrive)
     FAT_Close(fd);
 
     // read test.txt
-    char buffer[100];
+    char buffer[512];
     uint32_t read;
-    fd = FAT_Open(&disk, "mydir/test.txt");
-    while ((read = FAT_Read(&disk, fd, sizeof(buffer), buffer)))
+    fd = FAT_Open(&disk, "test.txt");
+    while ((read = FAT_Read(&disk, fd, sizeof(buffer) -1, buffer)))
     {
         for (uint32_t i = 0; i < read; i++)
         {
