@@ -148,7 +148,7 @@ uint32_t FAT_ClusterToLba(uint32_t cluster)
 
 FAT_File* FAT_OpenEntry(DISK* disk, FAT_DirectoryEntry* entry)
 {
-    // find empty handle
+    // find empty file handle
     int handle = -1;
     for (int i = 0; i < MAX_FILE_HANDLES && handle < 0; i++)
     {
@@ -156,11 +156,10 @@ FAT_File* FAT_OpenEntry(DISK* disk, FAT_DirectoryEntry* entry)
             handle = i;
     }
 
-    // out of handles
     if (handle < 0)
     {
         printf("FAT: out of file handles\r\n");
-        return false;
+        return NULL;
     }
 
     // setup vars
@@ -169,22 +168,39 @@ FAT_File* FAT_OpenEntry(DISK* disk, FAT_DirectoryEntry* entry)
     fd->Public.IsDirectory = (entry->Attributes & FAT_ATTRIBUTE_DIRECTORY) != 0;
     fd->Public.Position = 0;
     fd->Public.Size = entry->Size;
-    fd->FirstCluster = entry->FirstClusterLow + ((uint32_t)entry->FirstClusterHigh << 16);
-    fd->CurrentCluster = fd->FirstCluster;
-    fd->CurrentSectorInCluster = 0;
 
-    if (!DISK_ReadSectors(disk, fd->CurrentCluster, 1, fd->Buffer))
+    // compute first cluster for normal files
+    fd->FirstCluster = entry->FirstClusterLow + ((uint32_t)entry->FirstClusterHigh << 16);
+
+    if (fd->Public.IsDirectory && handle == ROOT_DIRECTORY_HANDLE)
     {
-        printf("FAT: read error!\r\n");
+        // special handling for root directory
+        fd->CurrentCluster = fd->FirstCluster; // LBA of first root dir sector
+        fd->CurrentSectorInCluster = 0;
+    }
+    else
+    {
+        // normal file
+        fd->CurrentCluster = fd->FirstCluster;
+        fd->CurrentSectorInCluster = 0;
     }
 
+    // read first sector immediately
+    if (!fd->Public.IsDirectory)
+    {
+        if (!DISK_ReadSectors(disk, FAT_ClusterToLba(fd->CurrentCluster), 1, fd->Buffer))
+        {
+            printf("FAT: read error\r\n");
+            return NULL;
+        }
+    }
 
     fd->Opened = true;
     return &fd->Public;
 }
 
 uint32_t FAT_NextCluster(uint32_t currentCluster)
-{    
+{
     uint32_t fatIndex = currentCluster * 3 / 2;
 
     if (currentCluster % 2 == 0)
@@ -202,31 +218,30 @@ uint32_t FAT_Read(DISK* disk, FAT_File* file, uint32_t byteCount, void* dataOut)
 
     uint8_t* u8DataOut = (uint8_t*)dataOut;
 
-    // don't read past the end of the file
-    if (!fd->Public.IsDirectory) 
+    // do not read past end of file
+    if (!fd->Public.IsDirectory)
         byteCount = min(byteCount, fd->Public.Size - fd->Public.Position);
 
     while (byteCount > 0)
     {
-        uint32_t leftInBuffer = SECTOR_SIZE - (fd->Public.Position % SECTOR_SIZE);
+        uint32_t sectorOffset = fd->Public.Position % SECTOR_SIZE;
+        uint32_t leftInBuffer = SECTOR_SIZE - sectorOffset;
         uint32_t take = min(byteCount, leftInBuffer);
 
-        memcpy(u8DataOut, fd->Buffer + fd->Public.Position % SECTOR_SIZE, take);
+        // copy from buffer
+        memcpy(u8DataOut, fd->Buffer + sectorOffset, take);
         u8DataOut += take;
         fd->Public.Position += take;
         byteCount -= take;
 
-        // printf("leftInBuffer=%lu take=%lu\r\n", leftInBuffer, take);
-        // See if we need to read more data
-        if (leftInBuffer == take)
+        // need next sector?
+        if (take == leftInBuffer && byteCount > 0)
         {
-            // Special handling for root directory
             if (fd->Public.Handle == ROOT_DIRECTORY_HANDLE)
             {
-                ++fd->CurrentCluster;
-
-                // read next sector
-                if (!DISK_ReadSectors(disk, fd->CurrentCluster, g_Data->BS.BootSector.SectorsPerFat, fd->Buffer))
+                // root directory: linear LBA
+                fd->CurrentCluster++;
+                if (!DISK_ReadSectors(disk, fd->CurrentCluster, 1, fd->Buffer))
                 {
                     printf("FAT: read error!\r\n");
                     break;
@@ -234,22 +249,21 @@ uint32_t FAT_Read(DISK* disk, FAT_File* file, uint32_t byteCount, void* dataOut)
             }
             else
             {
-                // calculate next cluster & sector to read
+                // normal file: advance sector in cluster
                 if (++fd->CurrentSectorInCluster >= g_Data->BS.BootSector.SectorsPerCluster)
                 {
                     fd->CurrentSectorInCluster = 0;
                     fd->CurrentCluster = FAT_NextCluster(fd->CurrentCluster);
+
+                    if (fd->CurrentCluster >= 0xFF8) // end of file
+                    {
+                        fd->Public.Size = fd->Public.Position;
+                        break;
+                    }
                 }
 
-                if (fd->CurrentCluster >= 0xFF8)
-                {
-                    // Mark end of file
-                    fd->Public.Size = fd->Public.Position;
-                    break;
-                }
-
-                // read next sector
-                if (!DISK_ReadSectors(disk, FAT_ClusterToLba(fd->CurrentCluster) + fd->CurrentSectorInCluster, 1, fd->Buffer))
+                uint32_t lba = FAT_ClusterToLba(fd->CurrentCluster) + fd->CurrentSectorInCluster;
+                if (!DISK_ReadSectors(disk, lba, 1, fd->Buffer))
                 {
                     printf("FAT: read error!\r\n");
                     break;

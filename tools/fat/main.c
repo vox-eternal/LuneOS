@@ -41,12 +41,12 @@ int main(int argc, const char** argv)
     else
     {
         uint32_t read = 0;
-        char buffer[100];
+        char buffer[512];
         while ((read = FAT_Read(&disk, fd, sizeof(buffer), buffer)))
         {
-            // for (uint32_t i = 0; i < read; i++)
-            //     putc(buffer[i], stdout);
-            // fflush(stdout);
+            for (uint32_t i = 0; i < read; i++)
+                putc(buffer[i], stdout);
+            fflush(stdout);
         }
     }
     

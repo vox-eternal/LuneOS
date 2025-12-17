@@ -7,4 +7,4 @@ utility.h(4): Warning! W138: No newline at end of file
 string.h(5): Warning! W138: No newline at end of file
 memory.h(6): Warning! W138: No newline at end of file
 ctype.h(5): Warning! W138: No newline at end of file
-fat.c(371): Warning! W138: No newline at end of file
+fat.c(384): Warning! W138: No newline at end of file
