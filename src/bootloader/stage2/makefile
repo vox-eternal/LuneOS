@@ -2,7 +2,7 @@ BUILD_DIR?=build/
 ASM?=nasm
 ASMFLAGS?=-f elf32
 CC16?=gcc
-CFLAGS16?=-ffreestanding -c -nostdlib -nostartfiles -nodefaultlibs # -oneatxzh 
+CFLAGS16?=-ffreestanding -c -nostdlib -nostartfiles -nodefaultlibs -g # -oneatxzh 
 LD16?=gcc
 
 SOURCES_C=$(wildcard *.c)

@@ -31,7 +31,7 @@ run_curses() {
 run_window() {
     echo "Trying graphical window display..."
     # Try GTK, then SDL as fallback
-    qemu-system-i386 -drive file="$IMG",format=raw,if=floppy -display gtk || {
+    qemu-system-i386 -s -S -drive file="$IMG",format=raw,if=floppy -display gtk || {
         echo "GTK failed; trying SDL..."
         qemu-system-i386 -drive file="$IMG",format=raw,if=floppy -display sdl
     }

@@ -1,9 +1,7 @@
-org 0x7C00
 bits 16
 
 
 %define ENDL 0x0D, 0x0A
-
 
 ;
 ; FAT12 header
@@ -98,7 +96,6 @@ start:
     inc ax                              ; division remainder != 0, add 1
                                         ; this means we have a sector only partially filled with entries
 .root_dir_after:
-
     ; read root directory
     mov cl, al                          ; cl = number of sectors to read = size of root directory
     pop ax                              ; ax = LBA of root directory
@@ -127,7 +124,6 @@ start:
     jmp stage2_not_found_error
 
 .found_stage2:
-
     ; di should have the address to the entry
     mov ax, [di + 26]                   ; first logical cluster field (offset 26)
     mov [stage2_cluster], ax
@@ -145,8 +141,6 @@ start:
     mov bx, stage2_LOAD_OFFSET
 
 .load_stage2_loop:
-    
-    ; Read next cluster
     mov ax, [stage2_cluster]
     
     ; not nice :( hardcoded value
@@ -187,15 +181,18 @@ start:
     jmp .load_stage2_loop
 
 .read_finish:
-    
     ; jump to our stage2
     mov dl, [ebr_drive_number]          ; boot device in dl
 
     mov ax, stage2_LOAD_SEGMENT         ; set segment registers
     mov ds, ax
     mov es, ax
-
+    
+    global stage2_LOAD_SEGMENT
     jmp stage2_LOAD_SEGMENT:stage2_LOAD_OFFSET
+
+    mov si, msg_debug
+    call puts
 
     jmp wait_key_and_reboot             ; should never happen
 
@@ -362,15 +359,15 @@ disk_reset:
     ret
 
 
-msg_loading:            db 'STG1 LOADED', ENDL, 0
-msg_read_failed:        db 'Read from disk failed!', ENDL, 0
-msg_stage2_not_found:   db 'stage2.BIN file not found!', ENDL, 0
+msg_loading:            db 'SLD', ENDL, 0
+msg_debug:              db 'DBG', ENDL, 0
+msg_read_failed:        db 'RFAIL', ENDL, 0
+msg_stage2_not_found:   db 'SNF', ENDL, 0
 file_stage2_bin:        db 'STAGE2  BIN'
 stage2_cluster:         dw 0
 
 stage2_LOAD_SEGMENT     equ 0x2000
 stage2_LOAD_OFFSET      equ 0
-
 
 times 510-($-$$) db 0
 dw 0AA55h
