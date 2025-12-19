@@ -103,7 +103,7 @@ void printf(const char* fmt, ...)
 
                     case 's':   if (length == PRINTF_LENGTH_LONG || length == PRINTF_LENGTH_LONG_LONG) 
                                 {
-                                    puts_f(*(const char**)argp);
+                                    puts_f((const char*) argp);
                                     argp += 2;
                                 }
                                 else 
@@ -241,8 +241,7 @@ int* printf_number(int* argp, int length, bool sign, int radix)
 
 void print_buffer(const char* msg, const void* buffer, uint16_t count)
 {
-    const uint8_t* u8Buffer = (const uint8_t*)buffer;
-    
+    const uint8_t* u8Buffer = (const uint8_t*)buffer;    
     puts(msg);
     for (uint16_t i = 0; i < count; i++)
     {

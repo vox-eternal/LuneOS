@@ -1,14 +1,12 @@
-BUILD_DIR?=build/
-ASM?=nasm
-ASMFLAGS?=-f elf32
-CC16?=gcc
-CFLAGS16?=-ffreestanding -c -nostdlib -nostartfiles -nodefaultlibs -g # -oneatxzh 
-LD16?=gcc
-
+TARGET_ASMFLAGS? += -f elf 
+TARGET_CFLAGS += -ffreestanding -nostdlib
+TARGET_LIBS += -lgcc
 SOURCES_C=$(wildcard *.c)
 SOURCES_ASM=$(wildcard *.asm)
-OBJECTS_C=$(patsubst %.c, $(BUILD_DIR)/stage2/c/%.obj, $(SOURCES_C))
+BUILD_DIR ?= $(abspath ../../../build)
 OBJECTS_ASM=$(patsubst %.asm, $(BUILD_DIR)/stage2/asm/%.obj, $(SOURCES_ASM))
+OBJECTS_C=$(patsubst %.c, $(BUILD_DIR)/stage2/c/%.obj, $(SOURCES_C))
+
 
 .PHONY: all stage2 clean always
 
@@ -16,14 +14,16 @@ all: stage2
 
 stage2: $(BUILD_DIR)/stage2.bin
 
+
 $(BUILD_DIR)/stage2.bin: $(OBJECTS_ASM) $(OBJECTS_C)
-	gcc -o $(BUILD_DIR)/stage2.bin $(OBJECTS_ASM) $(OBJECTS_C) -ffreestanding -nodefaultlibs -nostartfiles -nostdlib -Wl,-m elf_i386 -m32
+	$(TARGET_LD) $(TARGET_LINKFlAGS) -Map=$(BUILD_DIR)/stage2.map -o $@ $^ -T linker.ld
 
 $(BUILD_DIR)/stage2/c/%.obj: %.c always
-	$(CC16) $(CFLAGS16) -o $@ -m32 $<
+	$(TARGET_CC) $(TARGET_CFLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/stage2/asm/%.obj: %.asm always
-	$(ASM) $(ASMFLAGS) -o $@ $<
+	$(TARGET_ASM) $(TARGET_ASMFLAGS) -f elf32 -o $@ $<
+
 
 always:
 	mkdir -p $(BUILD_DIR)/stage2/c
