@@ -1,5 +1,6 @@
-BUILD_DIR ?= $(abspath ../../build)
+BUILD_DIR ?= $(abspath ../../../build)
 CC ?= gcc
+
 SRC := kernel.c
 OUT := $(BUILD_DIR)/kernel.bin
 
@@ -8,7 +9,8 @@ OUT := $(BUILD_DIR)/kernel.bin
 all: $(OUT)
 
 $(OUT): $(SRC)
-	$(CC) -o $@ $<
+	mkdir -p $(BUILD_DIR)
+	$(CC) -c $< -o $@
 
 clean:
 	rm -f $(OUT)
